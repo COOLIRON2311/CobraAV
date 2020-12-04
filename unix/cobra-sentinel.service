@@ -1,0 +1,12 @@
+[Unit]
+Description=Cobra Sentinel Service
+After=network.target
+
+[Service]
+# User=zloy_admin
+WorkingDirectory=/opt/cobraav
+ExecStart=/opt/cobraav/demo
+# StandardOutput=syslog+tty
+
+[Install]
+WantedBy=multi-user.target
