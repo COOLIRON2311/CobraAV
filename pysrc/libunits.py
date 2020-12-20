@@ -27,3 +27,27 @@ class Minutes(_Unit):
     def __init__(self, time: int) -> None:
         self._value = time * 60
         super().__init__(time)
+
+
+class Hours(_Unit):
+    _name = 'hours'
+
+    def __init__(self, time: int) -> None:
+        self._value = time * 3600
+        super().__init__(time)
+
+
+class Days(_Unit):
+    _name = 'days'
+
+    def __init__(self, time: int) -> None:
+        self._value = time * 86400
+        super().__init__(time)
+
+
+class Weeks(_Unit):
+    _name = 'weeks'
+
+    def __init__(self, time: int) -> None:
+        self._value = time * 604800
+        super().__init__(time)
