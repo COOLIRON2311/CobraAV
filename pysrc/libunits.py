@@ -75,3 +75,27 @@ class KBytes(_Unit):
     def __init__(self, size: int) -> None:
         self._value = size * 1024
         super().__init__(size)
+
+
+class MBytes(_Unit):
+    _name = 'megabytes'
+
+    def __init__(self, size: int) -> None:
+        self._value = size * 1048576
+        super().__init__(size)
+
+
+class GBytes(_Unit):
+    _name = 'gigabytes'
+
+    def __init__(self, size: int) -> None:
+        self._value = size * 1073741824
+        super().__init__(size)
+
+
+class TBytes(_Unit):
+    _name = 'terabytes'
+
+    def __init__(self, size: int) -> None:
+        self._value = size * 1099511627776
+        super().__init__(size)
