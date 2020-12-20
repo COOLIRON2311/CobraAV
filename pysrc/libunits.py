@@ -51,3 +51,27 @@ class Weeks(_Unit):
     def __init__(self, time: int) -> None:
         self._value = time * 604800
         super().__init__(time)
+
+
+class Months(_Unit):
+    _name = 'months'
+
+    def __init__(self, time: int) -> None:
+        self._value = time * 2592000
+        super().__init__(time)
+
+
+class Bytes(_Unit):
+    _name = 'bytes'
+
+    def __init__(self, size: int) -> None:
+        self._value = size
+        super().__init__(size)
+
+
+class KBytes(_Unit):
+    _name = 'kilobytes'
+
+    def __init__(self, size: int) -> None:
+        self._value = size * 1024
+        super().__init__(size)
