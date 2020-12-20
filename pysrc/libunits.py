@@ -19,3 +19,11 @@ class _Unit(ABC):
     @property
     def value(self) -> int:
         return self._value
+
+
+class Minutes(_Unit):
+    _name = 'minutes'
+
+    def __init__(self, time: int) -> None:
+        self._value = time * 60
+        super().__init__(time)
