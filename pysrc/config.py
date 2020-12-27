@@ -5,7 +5,10 @@ UPDATE_FREQ = Days(1)  # Check interval
 MAX_FILE_SIZE = MBytes(8)  # Max file size
 
 # Antivirus database sources
-AV_SOURCES = [r'https://clamav.net']
+AV_SOURCES = [r'http://database.clamav.net/main.cvd']
+
+# Antivirus database path
+DB_PATH = r'/opt/cobraav/signatures'
 
 # On threat:
 # 0 - quarantine
@@ -16,7 +19,7 @@ REMOVE_THREATS = 1
 SCAN_TARGETS = [r'/home/zloy_admin/vir', r'/home/zloy_admin/efsw']
 
 # Exclude from scanning
-SCAN_EXCLUDE = [r'*.js', r'*.htm']
+SCAN_EXCLUDE = [r'.*\.js', r'.*\.htm']
 
 # quarantine location
 QUARANTINE_PATH = r'/opt/cobraav/quarantine'
