@@ -9,6 +9,7 @@ struct cl_scan_options options;
 
 int setup()
 {
+    int ret;
     if ((ret = cl_init(CL_INIT_DEFAULT)) != CL_SUCCESS)
     {
         printf("Can't initialize libclamav: %s\n", cl_strerror(ret));
@@ -53,7 +54,8 @@ int scan(const char *filename)
     /* scan file descriptor */
     memset(&options, 0, sizeof(struct cl_scan_options));
     options.parse |= ~0;                           /* enable all parsers */
-    options.general |= CL_SCAN_GENERAL_HEURISTICS; /* enable heuristic alert options */
+    // options.general |= CL_SCAN_GENERAL_HEURISTICS; /* enable heuristic alert options */
+    options.general |= CL_SCAN_GENERAL_ALLMATCHES;
     if ((ret = cl_scandesc(fd, filename, &virname, &size, engine, &options)) == CL_VIRUS)
     {
         printf("%s: %s\n", filename, virname);
@@ -64,12 +66,14 @@ int scan(const char *filename)
     {
         if (ret == CL_CLEAN)
         {
-            printf("%s: No virus detected\n", filename);
+            // printf("%s: No virus detected\n", filename);
+            close(fd);
+            return 0;
         }
         else
         {
             printf("Error: %s\n", cl_strerror(ret));
-            cl_engine_free(engine);
+            // cl_engine_free(engine);
             close(fd);
             return 2;
         }

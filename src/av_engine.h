@@ -15,9 +15,5 @@
  *  2: error
  */
 
-extern struct cl_engine *engine;
-extern unsigned long int size;
-extern int ret;
-
 int setup();
 int scan(const char*);
