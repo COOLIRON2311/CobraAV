@@ -1,28 +1,36 @@
 #include "av_engine.h"
+#include "cobra-sentnel.h"
 
 int main(int argc, char **argv)
 {
     setvbuf(stdout, NULL, _IONBF, BUFSIZ);
-    long double mb;
-    size_t infected = 0;
     if (argc < 2)
     {
-        printf("Usage: %s files\n", argv[0]);
+        printf("Usage: %s directories\n", argv[0]);
         return 2;
     }
 
     if (setup() == 2)
         return 2;
 
-    for (size_t i = 1; i < argc; i++)
-        if (scan(argv[i]) == 1)
-            infected++;
-    /* free memory */
-    cl_engine_free(engine);
-    /* calculate size of scanned data */
-    mb = size * (CL_COUNT_PRECISION / 1024) / 1024.0;
-    printf("Data scanned: %2.2Lf MB\n", mb);
-    printf("Infected files: %i\n", infected);
+    // Create the file system watcher instance
+    // FileWatcher allow a first boolean parameter that indicates if it should start with the generic file watcher instead of the platform specific backend
+    FileWatcher *fileWatcher = new FileWatcher();
 
-    return ret == CL_VIRUS ? 1 : 0;
+    // Create the instance of your FileWatcherListener implementation
+    UpdateListener *listener = new UpdateListener();
+
+    // Add a folder to watch, and get the WatchID
+    // It will watch the /tmp folder recursively ( the third parameter indicates that is recursive )
+    // Reporting the files and directories changes to the instance of the listener
+    for (size_t i = 1; i < argc; i++)
+        fileWatcher->addWatch(argv[i], listener, true);
+
+    fileWatcher->watch();
+
+    while (true)
+    {
+        listener->process_queue();
+        usleep(1);
+    }
 }
