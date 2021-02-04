@@ -1,12 +1,17 @@
+#include <unistd.h>
+#include <poll.h>
+#include <sys/ioctl.h>
+#include <sstream>
 #include "av_engine.h"
-#include "cobra-sentnel.h"
+#include "cobra-sentinel.h"
+
 
 int main(int argc, char **argv)
 {
     setvbuf(stdout, NULL, _IONBF, BUFSIZ);
-    if (argc < 2)
+    if (argc < 10)
     {
-        printf("Usage: %s directories\n", argv[0]);
+        printf("Usage:\ncobra-sentinel -msize <bytes> -threat <0/1> -t <dirs> -e <wildcards> -q <path>\n");
         return 2;
     }
 
@@ -20,11 +25,30 @@ int main(int argc, char **argv)
     // Create the instance of your FileWatcherListener implementation
     UpdateListener *listener = new UpdateListener();
 
-    // Add a folder to watch, and get the WatchID
-    // It will watch the /tmp folder recursively ( the third parameter indicates that is recursive )
-    // Reporting the files and directories changes to the instance of the listener
-    for (size_t i = 1; i < argc; i++)
-        fileWatcher->addWatch(argv[i], listener, true);
+    // Parse trivial config parameters
+    listener->maxfsize = atoi(argv[2]);
+    listener->remove_threat = atoi(argv[4]);
+    listener->quarantine_path = argv[argc-1];
+    size_t i = 6;
+    while (strcmp(argv[i], "-e") != 0)
+        // Add a folder to watch, and get the WatchID
+        // It will watch the /tmp folder recursively ( the third parameter indicates that is recursive )
+        // Reporting the files and directories changes to the instance of the listener
+        fileWatcher->addWatch(argv[i++], listener, true);
+    i++;
+    while (strcmp(argv[i], "-q") != 0)
+    {
+        // Add wildcards to scan exceptions list
+        try
+        {
+            listener->exceptions.emplace_back(argv[i++], regex_constants::extended);
+        }
+        catch (regex_error& e)
+        {
+            cout << e.what() << ": ignored " << argv[i-1] << endl;
+        }
+    }
+
 
     fileWatcher->watch();
 
