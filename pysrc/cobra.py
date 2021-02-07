@@ -1,7 +1,19 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from datetime import datetime
+from os import chmod, remove, rename, scandir, stat, system
+from os.path import abspath, basename, getctime, isfile, getsize
+from os.path import join as path_join
+from pwd import getpwuid
+from stat import filemode
 from sys import argv
-from os import system
+from config import QUARANTINE_PATH
+from libavctl import DataBase, enqueue_scan
 from libconfig import main as config_main
+
+
+class InvalidArgument(Exception):
+    ...
 
 CONTROL = 'systemctl {} cobra-sentinel.service'
 
