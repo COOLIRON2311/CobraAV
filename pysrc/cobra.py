@@ -100,16 +100,35 @@ def clear_threats() -> None:
         remove(i.path)
 
 
-def main():
-    if len(argv) < 2 or len(argv) > 2:
+def main() -> None:
+    argc = len(argv)
+    if argc < 2:
         print(__doc__)
-    else:
+
+    elif argc == 2:
+        opts = {'config': config_main, 'list-threats': list_threats,
+                'clear-threats': clear_threats}
         if argv[1] in ('start', 'stop', 'status'):
             system(CONTROL.format(argv[1]))
-        elif argv[1] == 'config':
-            config_main()
+        elif argv[1] in opts:
+            opts[argv[1]]()
         else:
-            raise Warning('Unknown argument')
+            raise InvalidArgument
 
-if __name__ == "__main__":
+    elif argc == 3:
+        opts = {'whitelist': DataBase.whitelist,
+                'blacklist': DataBase.blacklist,
+                'scan': lambda x: enqueue_scan(abspath(x), FIFO_PATH),
+                'contain': contain,
+                'decontain': decontain,
+                'remove': _remove}
+        if argv[1] in opts:
+            opts[argv[1]](argv[2])
+        else:
+            raise InvalidArgument
+    else:
+        print(__doc__)
+
+
+if __name__ == '__main__':
     main()
