@@ -111,7 +111,7 @@ public:
                         cache.add(file.Hash);
                     // dbg_log(file.path);
                     infected++;
-                    cout << infected << endl;
+                    // cout << infected << endl;
                 }
                 // update_size();
             }

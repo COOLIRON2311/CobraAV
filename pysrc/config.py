@@ -1,6 +1,6 @@
 from libunits import *
 
-CHECK_FOR_UPDATES = 1  # Check for updates
+CHECK_FOR_UPDATES = 0  # Check for updates
 UPDATE_FREQ = Days(1)  # Check interval
 MAX_FILE_SIZE = MBytes(8)  # Max file size
 
@@ -16,16 +16,16 @@ DB_PATH = r'/opt/cobraav/signatures'
 REMOVE_THREATS = 1
 
 # Directories to scan
-SCAN_TARGETS = [r'/home/zloy_admin/vir', r'/home/zloy_admin/efsw']
+SCAN_TARGETS = [r'/home']
 
 # Exclude from scanning
-SCAN_EXCLUDE = [r'.*\.js', r'.*\.htm']
+SCAN_EXCLUDE = []
 
 # quarantine location
 QUARANTINE_PATH = r'/opt/cobraav/quarantine'
 
 # Send scan reports
-SEND_SCAN_REPORTS = 1
+SEND_SCAN_REPORTS = 0
 
 # Scan reports frequency
 SEND_FREQ = Weeks(1)

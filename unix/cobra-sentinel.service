@@ -5,8 +5,8 @@ After=network.target
 [Service]
 # User=zloy_admin
 WorkingDirectory=/opt/cobraav
-ExecStart=/opt/cobraav/demo
-# StandardOutput=syslog+tty
+ExecStart=/opt/cobraav/cobraav.sh
+# MemoryLimit=100M
 
 [Install]
 WantedBy=multi-user.target
