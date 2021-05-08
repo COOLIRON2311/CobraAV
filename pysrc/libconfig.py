@@ -26,22 +26,28 @@ def center_win(win: Tk, geom: str = '') -> None:
 
 
 class EntryOptionsWindow:
+    instanciated: bool = False
     def __init__(self, ls: str, tk: Tk, select_path=False) -> None:
-        self.select_path = select_path
-        self.List = ls
-        self.Tk = tk
-        self.Root = Toplevel(self.Tk)
-        self.Root.withdraw()
-        self.Frame = Frame(self.Root)
-        self.Box = Listbox(self.Frame, selectmode='extended', width=54, height=24)
-        for i in globals()[self.List]:
-            self.Box.insert(END, i)
-        self.Scroll = Scrollbar(self.Frame, command=self.Box.yview)
-        self.Entry = Entry(self.Frame)
-        self.ButtonAdd = Button(self.Frame, text='Добавить', command=self.__add_item)
-        self.ButtonDel = Button(self.Frame, text='Удалить', command=self.__del_item)
-        self.ButtonDone = Button(self.Frame, text='Готово', command=self.__save_list)
-        self.ButtonExit = Button(self.Frame, text='Отмена', command=self.Root.destroy)
+        if not EntryOptionsWindow.instanciated:
+            self.select_path = select_path
+            self.List = ls
+            self.Tk = tk
+            self.Root = Toplevel(self.Tk)
+            self.Root.withdraw()
+            self.Root.protocol("WM_DELETE_WINDOW", self.__close)
+            self.ListFrame = Frame(self.Root)
+            self.Box = Listbox(self.ListFrame, selectmode='extended', width=54, height=24)
+            for i in globals()[self.List]:
+                self.Box.insert(END, i)
+            self.Scroll = Scrollbar(self.ListFrame, command=self.Box.yview)
+            self.ButtonsFrame = Frame(self.Root)
+            self.Entry = Entry(self.ButtonsFrame)
+            self.ButtonAdd = Button(self.ButtonsFrame, text='Добавить', command=self.__add_item)
+            self.ButtonDel = Button(self.ButtonsFrame, text='Удалить', command=self.__del_item)
+            self.ButtonDone = Button(self.ButtonsFrame, text='Готово', command=self.__save_list)
+            self.ButtonExit = Button(self.ButtonsFrame, text='Отмена', command=self.__close)
+            EntryOptionsWindow.instanciated = True
+            self.main()
 
     def __add_item(self) -> None:
         if self.select_path:
@@ -60,22 +66,30 @@ class EntryOptionsWindow:
 
     def __save_list(self) -> None:
         globals()[self.List] = list(self.Box.get(0, END))
+        self.__close()
+
+    def __close(self) -> None:
+        EntryOptionsWindow.instanciated = False
         self.Root.destroy()
 
+
+
     def main(self) -> None:
-        center_win(self.Root, '500x400')
         self.Root.deiconify()
+        center_win(self.Root, '500x390' if self.select_path else '500x410')
+        self.Root.resizable(False, False)
         self.Root.title(f'Editing {self.List}')
-        self.Box.pack(side='left', expand=True)
-        self.Scroll.pack(side='left', fill='y')
+        self.ListFrame.pack(side='top', fill='both', padx=2, pady=2)
+        self.Box.pack(side='left', fill='both', expand=True, padx=2, pady=2)
+        self.Scroll.pack(side='right', fill='y', padx=2, pady=2)
         self.Box.config(yscrollcommand=self.Scroll.set)
-        self.Frame.pack(side='left', padx=10)
+        self.ButtonsFrame.pack(side='top', padx=2, pady=2, fill='x')
         if not self.select_path:
-            self.Entry.pack(anchor='n')
-        self.ButtonAdd.pack(fill='x')
-        self.ButtonDel.pack(fill='x')
-        self.ButtonDone.pack(fill='x')
-        self.ButtonExit.pack(fill='x')
+            self.Entry.pack(fill='both', expand=True, anchor='w', side='top', padx=2, pady=6)
+        self.ButtonAdd.pack(fill='x',  side='left', padx=2, pady=2)
+        self.ButtonDel.pack(fill='x',  side='left', padx=2, pady=2)
+        self.ButtonDone.pack(fill='x', side='left', padx=2, pady=2)
+        self.ButtonExit.pack(fill='x', side='left', padx=2, pady=2)
         self.Root.mainloop()
 
 
@@ -109,7 +123,7 @@ class MainWindow:
                                     from_=1, to=999999999, width=4)
         self.Upd_OptionMenu1 = OptionMenu(self.UpdatesFrame, self.upd_unit, *self.time_units.values())
         self.Upd_Button1 = Button(
-            self.UpdatesFrame, text='Источники антивирусных сигнатур', command=EntryOptionsWindow('AV_SOURCES', self.Root).main)
+            self.UpdatesFrame, text='Источники антивирусных сигнатур', command=lambda: EntryOptionsWindow('AV_SOURCES', self.Root))
 
         self.ScanFrame = LabelFrame(self.App, text='Сканирование',
                                     borderwidth=2, relief='sunken', padding=(5, 2))
@@ -122,8 +136,8 @@ class MainWindow:
         self.Quar_RadButton2 = Radiobutton(self.ScanFrame, text='Карантин', variable=self.quar, value=True)
 
         self.Scn_OptionMenu1 = OptionMenu(self.ScanFrame, self.size_unit, *self.size_units.values())
-        self.Scn_Edit_Targets = Button(self.ScanFrame, text='Цели сканирования', command=EntryOptionsWindow('SCAN_TARGETS', self.Root, select_path=True).main)
-        self.Scn_Edit_Exceptions = Button(self.ScanFrame, text='Исключения', command=EntryOptionsWindow('SCAN_EXCLUDE', self.Root).main)
+        self.Scn_Edit_Targets = Button(self.ScanFrame, text='Цели сканирования', command=lambda: EntryOptionsWindow('SCAN_TARGETS', self.Root, select_path=True))
+        self.Scn_Edit_Exceptions = Button(self.ScanFrame, text='Исключения', command=lambda: EntryOptionsWindow('SCAN_EXCLUDE', self.Root))
         self.Quar_Button1 = Button(self.ScanFrame, text='Расположение карантина',
                                    command=lambda: self.quar_path.set(filedialog.askdirectory()))
 
@@ -140,7 +154,7 @@ class MainWindow:
         self.Rpt_Spinbox1 = Spinbox(self.ReportFrame, textvariable=self.units_amount2,
                                     from_=1, to=999999999, width=4)
         self.Rpt_OptionMenu1 = OptionMenu(self.ReportFrame, self.rpt_unit, *self.time_units.values())
-        self.Rpt_Button1 = Button(self.ReportFrame, text='Получатели', command=EntryOptionsWindow('SEND_TO', self.Root).main)
+        self.Rpt_Button1 = Button(self.ReportFrame, text='Получатели', command=lambda: EntryOptionsWindow('SEND_TO', self.Root))
 
         self.Buttons = Frame(self.App, padding=(5, 2))
         self.Button1 = Button(self.Buttons, text='Готово', command=self.save_conf)
@@ -295,4 +309,6 @@ def main() -> None:
         Program.main()
     except TclError:
         system(f'/usr/bin/editor {CONF_PATH}')
+    except BaseException as e:
+        print(f"{e.__class__.__name__}: {e}")
 
