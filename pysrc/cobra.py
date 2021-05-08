@@ -5,6 +5,7 @@ from os import chmod, remove, rename, scandir, stat, system
 from os.path import abspath, basename, getctime, isfile, getsize
 from os.path import join as path_join
 from pwd import getpwuid
+from libavctl import send_reload
 from stat import filemode
 from sys import argv
 from config import QUARANTINE_PATH
@@ -100,6 +101,21 @@ def clear_threats() -> None:
         remove(i.path)
 
 
+def whitelist(path: str) -> None:
+    DataBase.whitelist(path)
+    send_reload()
+
+
+def blacklist(path: str) -> None:
+    DataBase.blacklist(path)
+    send_reload()
+
+def scan(path: str) -> None:
+    enqueue_scan(abspath(path))
+    print('Started scanning...')
+    print("Run 'cobra status' to see scan results")
+
+
 def main() -> None:
     argc = len(argv)
     if argc < 2:
@@ -116,9 +132,9 @@ def main() -> None:
             raise InvalidArgument
 
     elif argc == 3:
-        opts = {'whitelist': DataBase.whitelist,
-                'blacklist': DataBase.blacklist,
-                'scan': lambda x: enqueue_scan(abspath(x), FIFO_PATH),
+        opts = {'whitelist': whitelist,
+                'blacklist': blacklist,
+                'scan': scan,
                 'contain': contain,
                 'decontain': decontain,
                 'remove': _remove}
