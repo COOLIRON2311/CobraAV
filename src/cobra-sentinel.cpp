@@ -50,21 +50,6 @@ int main(int argc, char **argv)
             cout << e.what() << ": ignored " << argv[i-1] << endl;
         }
     }
-    /*
-0 cobra-sentinel
-1 -msize
-2 8388608
-3 -threat
-4 1
-5 -t
-6 /home/zloy_admin/vir
-7 /home/zloy_admin/efsw
-8 -e
-9 *.js
-10 *.htm
-11 -q
-12 /opt/cobraav/quarantine
-    */
 
     umask(0);
     stringstream data;

@@ -105,6 +105,8 @@ public:
             if (!cache.contains(file.Hash))
             {
                 int ret = scan(file.path.c_str());
+                if (!file.cache && ret == 0) // manually enqued file is clean
+                    printf("%s: Clean\n", file.path.c_str());
                 if (ret == 1) // only store infected files
                 {
                     if (file.cache)

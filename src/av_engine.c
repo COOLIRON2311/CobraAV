@@ -6,6 +6,7 @@ unsigned int sigs = 0;
 const char *virname;
 struct cl_engine *engine;
 struct cl_scan_options options;
+const char* db_path = "/opt/cobraav/signatures";
 
 int setup()
 {
@@ -23,7 +24,7 @@ int setup()
     }
 
     /* load all available databases from default directory */
-    if ((ret = cl_load("/opt/cobraav/signatures", engine, &sigs, CL_DB_STDOPT)) != CL_SUCCESS)
+    if ((ret = cl_load(db_path, engine, &sigs, CL_DB_STDOPT)) != CL_SUCCESS)
     {
         printf("cl_load: %s\n", cl_strerror(ret));
         close(fd);

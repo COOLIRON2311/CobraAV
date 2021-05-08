@@ -162,3 +162,8 @@ void enqueue_scan(const string &path, const string &fifo_path = "/tmp/cobra.sock
     else
         throw invalid_argument("file does not exist");
 }
+
+void send_reload()
+{
+    system("systemctl restart cobra-sentinel.service");
+}
