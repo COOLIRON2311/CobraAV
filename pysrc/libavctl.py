@@ -1,5 +1,5 @@
 from hashlib import md5, new
-from os import remove, rename, stat
+from os import remove, rename, stat, system
 from os.path import isfile, getsize
 from typing import Generator
 
@@ -47,8 +47,7 @@ class DataBase:
             else:
                 rename(db+'_temp', db)
         except FileNotFoundError:
-            with open(db, 'w'):
-                pass
+            pass
 
     @staticmethod
     def whitelist(path: str) -> None:
@@ -103,3 +102,8 @@ def enqueue_scan(path: str, fifo_path: str = '/tmp/cobra.sock') -> None:
             pipe.write(path)
     else:
         raise FileNotFoundError("file does not exist")
+
+
+def send_reload() -> None:
+    system('systemctl restart cobra-sentinel.service')
+
