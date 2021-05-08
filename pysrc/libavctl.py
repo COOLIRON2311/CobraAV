@@ -1,6 +1,6 @@
 from hashlib import md5, new
 from os import remove, rename, stat
-from os.path import isfile
+from os.path import isfile, getsize
 from typing import Generator
 
 # Configuration constants
@@ -42,7 +42,10 @@ class DataBase:
                         w.write(t)
                     t = r.readline()
             remove(db)
-            rename(db+'_temp', db)
+            if getsize(db+'_temp') == 0:
+                remove(db+'_temp')
+            else:
+                rename(db+'_temp', db)
         except FileNotFoundError:
             with open(db, 'w'):
                 pass

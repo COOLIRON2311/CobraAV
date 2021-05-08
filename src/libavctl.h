@@ -79,6 +79,7 @@ private:
         ifstream r(db);
         ofstream w(db + "_temp");
         string t;
+        struct stat st;
         getline(r, t);
         while (r)
         {
@@ -90,7 +91,11 @@ private:
         r.close();
         w.close();
         remove(db.c_str());
-        rename((db + "_temp").c_str(), db.c_str());
+        stat((db + "_temp").c_str(), &st);
+        if (st.st_size == 0)
+            remove((db + "_temp").c_str());
+        else
+            rename((db + "_temp").c_str(), db.c_str());
     }
 
 public:
