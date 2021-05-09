@@ -1,10 +1,10 @@
 [Unit]
-Description=Cobra Sentinel Service
+Description=Cobra Update Service
 After=network.target
 
 [Service]
 WorkingDirectory=/opt/cobraav
-ExecStart=/opt/cobraav/cobraav.sh
+ExecStart=/opt/cobraav/update.py
 
 [Install]
 WantedBy=multi-user.target

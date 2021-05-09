@@ -1,10 +1,10 @@
 [Unit]
-Description=Cobra Sentinel Service
+Description=Cobra Email Notification Service
 After=network.target
 
 [Service]
 WorkingDirectory=/opt/cobraav
-ExecStart=/opt/cobraav/cobraav.sh
+ExecStart=/opt/cobraav/notify.py
 
 [Install]
 WantedBy=multi-user.target
