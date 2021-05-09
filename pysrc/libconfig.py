@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from os import system
+from os import getuid, system
 from tkinter import (END, BooleanVar, Listbox, OptionMenu, Spinbox, StringVar,
                      TclError, Tk, Toplevel, Variable, Widget, filedialog)
 from tkinter.ttk import (Button, Checkbutton, Entry, Frame, Label, LabelFrame,
@@ -179,7 +179,11 @@ class MainWindow:
         self.quar_path.set(QUARANTINE_PATH)
         self.rpt_enabled.set(SEND_SCAN_REPORTS)
         self.email.set(SEND_FROM)
-        self.passwd.set(SEND_PASSWD)
+        try:
+            with open('/root/.cobpwd', 'r') as f:
+                self.passwd.set(f.read())
+        except FileNotFoundError:
+            pass
         self.rpt_unit.set(self.time_units[type(SEND_FREQ)])
         self.units_amount2.set(SEND_FREQ.value)
 
@@ -246,7 +250,7 @@ class MainWindow:
         time_units = {v: k for k, v in self.time_units.items()}
 
         def wrap_list(a: 'list[str]') -> str:
-            return '[' + ', '.join(f"r'{i}'" for i in a) + ']'
+            return '[' + ', \n'.join(f"r'{i}'" for i in a) + ']'
 
         def wrap_cls(_unit: Variable, amount: Variable) -> str:
             unit = _unit.get()
@@ -256,6 +260,23 @@ class MainWindow:
                 return time_units[unit].__name__ + f'({amount.get()})'
             else:
                 raise NotImplementedError
+
+        if self.upd_enabled.get():
+            system('systemctl enable cobra-update.service')
+            system('systemctl restart cobra-update.service')
+        else:
+            system('systemctl stop cobra-update.service')
+            system('systemctl disable cobra-update.service')
+
+        if self.rpt_enabled.get():
+            system('systemctl enable cobra-notify.service')
+            system('systemctl restart cobra-notify.service')
+        else:
+            system('systemctl stop cobra-notify.service')
+            system('systemctl disable cobra-notify.service')
+
+        with open('/root/.cobpwd', 'w') as f:
+            f.write(self.passwd.get())
 
         with open(CONF_PATH, 'w') as f:
             f.write(
@@ -294,16 +315,20 @@ SEND_FREQ = {wrap_cls(self.rpt_unit, self.units_amount2)}
 # Send from this email
 SEND_FROM = r'{self.email.get()}'
 
-# Sender email password
-SEND_PASSWD = r'{self.passwd.get()}'
-
 # Send to these emails
 SEND_TO = {wrap_list(SEND_TO)}
+
+# SMTP settings (preset for gmail)
+SMTP_HOST = 'smtp.gmail.com'
+SMTP_PORT = 587
 """)
         self.Root.destroy()
 
 
 def main() -> None:
+    if getuid() != 0:
+        print('This operation requires root')
+        return
     try:
         Program = MainWindow()
         Program.main()
