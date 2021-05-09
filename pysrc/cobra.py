@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from os import chmod, remove, rename, scandir, stat, system
+from os import chmod, getuid, remove, rename, scandir, stat, system
 from os.path import abspath, basename, getctime, isfile, getsize
 from os.path import join as path_join
 from pwd import getpwuid
@@ -29,6 +29,7 @@ Commands:
  (de)contain       - Move file from/to quarantine
  remove            - Delete contained threat
  config            - Open configuration interface
+ setpwd            - Set sender email password
  scan              - Manually specify scan target
  whitelist         - Add file signature to exceptions list
  blacklist         - Add file signature to malware database
@@ -110,10 +111,19 @@ def blacklist(path: str) -> None:
     DataBase.blacklist(path)
     send_reload()
 
+
 def scan(path: str) -> None:
     enqueue_scan(abspath(path))
     print('Started scanning...')
     print("Run 'cobra status' to see scan results")
+
+
+def setpwd(pwd: str) -> None:
+    if getuid() != 0:
+        print('This operation requires root')
+        return
+    with open('/root/.cobpwd', 'w') as f:
+        f.write(pwd)
 
 
 def main() -> None:
@@ -125,6 +135,9 @@ def main() -> None:
         opts = {'config': config_main, 'list-threats': list_threats,
                 'clear-threats': clear_threats}
         if argv[1] in ('start', 'stop', 'status'):
+            if argv[1] != 'status' and getuid() != 0:
+                print('This operation requires root')
+                return
             system(CONTROL.format(argv[1]))
         elif argv[1] in opts:
             opts[argv[1]]()
@@ -137,7 +150,8 @@ def main() -> None:
                 'scan': scan,
                 'contain': contain,
                 'decontain': decontain,
-                'remove': _remove}
+                'remove': _remove,
+                'setpwd': setpwd}
         if argv[1] in opts:
             opts[argv[1]](argv[2])
         else:
