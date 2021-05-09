@@ -21,8 +21,11 @@ def main() -> None:
 if __name__ == '__main__':
     if CHECK_FOR_UPDATES:
         main()
-    print(f'Sleeping {UPDATE_FREQ.pprint()}')
+    else:
+        print('Updates disabled. Exiting.')
+        exit()
+    print(f'Sleeping {UPDATE_FREQ.pprint()}', flush=True)
     try:
-        sleep(UPDATE_FREQ.value)
+        sleep(int(UPDATE_FREQ))
     except KeyboardInterrupt:
         print('Shutting down')

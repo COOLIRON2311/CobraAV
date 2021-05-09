@@ -16,6 +16,9 @@ class _Unit(ABC):
     def __repr__(self) -> str:
         return str(self._raw)
 
+    def __int__(self) -> int:
+        return self._raw
+
     @property
     def value(self) -> int:
         return self._value
