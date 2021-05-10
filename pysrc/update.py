@@ -3,19 +3,21 @@
 from os.path import basename
 from os.path import join as path_join
 from time import sleep
-from requests import get
-from libavctl import send_reload
+from urllib.request import urlretrieve
 from config import AV_SOURCES, CHECK_FOR_UPDATES, DB_PATH, UPDATE_FREQ
+from libavctl import send_reload
 
-FIFO_PATH = '/tmp/cobra.sock'
 
-def main() -> None:
+def main(show_output: bool = False) -> None:
     for i in AV_SOURCES:
-        r = get(i, allow_redirects=True)
-        with open(path_join(DB_PATH, basename(i)), 'wb') as f:
-            f.write(r.content)
+        if show_output:
+            print('Updating', basename(i))
+        try:
+            urlretrieve(i, path_join(DB_PATH, basename(i)))
+        except Exception as e:
+            print(f'{type(e).__name__}: {e}')
     send_reload()
-    print('Sent reload signal to daemon')
+    print('Sent reload signal to daemon', flush=True)
 
 
 if __name__ == '__main__':

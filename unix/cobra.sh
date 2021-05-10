@@ -5,7 +5,7 @@ _cobra ()
     local cur=${COMP_WORDS[COMP_CWORD]}
     case $COMP_CWORD in
     1)
-        COMPREPLY=( $(compgen -W "scan start stop status config setpwd whitelist blacklist contain decontain remove list-threats clear-threats" -- $cur) )
+        COMPREPLY=( $(compgen -W "scan start stop status config update setpwd whitelist blacklist contain decontain remove list-threats clear-threats" -- $cur) )
         return 0;;
     2)
         local IFS=$'\n'

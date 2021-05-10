@@ -261,14 +261,14 @@ class MainWindow:
             else:
                 raise NotImplementedError
 
-        if self.upd_enabled.get():
+        if self.upd_enabled.get() and not CHECK_FOR_UPDATES:
             system('systemctl enable cobra-update.service')
             system('systemctl restart cobra-update.service')
         else:
             system('systemctl stop cobra-update.service')
             system('systemctl disable cobra-update.service')
 
-        if self.rpt_enabled.get():
+        if self.rpt_enabled.get() and not SEND_SCAN_REPORTS:
             system('systemctl enable cobra-notify.service')
             system('systemctl restart cobra-notify.service')
         else:
@@ -335,5 +335,5 @@ def main() -> None:
     except TclError:
         system(f'/usr/bin/editor {CONF_PATH}')
     except BaseException as e:
-        print(f"{e.__class__.__name__}: {e}")
+        print(f'{type(e).__name__}: {e}')
 

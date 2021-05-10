@@ -9,6 +9,7 @@ from libavctl import send_reload
 from stat import filemode
 from sys import argv
 from config import QUARANTINE_PATH
+from update import main as update_main
 from libavctl import DataBase, enqueue_scan
 from libconfig import main as config_main
 
@@ -31,6 +32,7 @@ Commands:
  config            - Open configuration interface
  setpwd            - Set sender email password
  scan              - Manually specify scan target
+ update            - Manually update malware database
  whitelist         - Add file signature to exceptions list
  blacklist         - Add file signature to malware database
  list-threats      - View contained threats
@@ -134,11 +136,14 @@ def main() -> None:
     elif argc == 2:
         opts = {'config': config_main, 'list-threats': list_threats,
                 'clear-threats': clear_threats}
-        if argv[1] in ('start', 'stop', 'status'):
+        if argv[1] in ('start', 'stop', 'status', 'update'):
             if argv[1] != 'status' and getuid() != 0:
                 print('This operation requires root')
                 return
-            system(CONTROL.format(argv[1]))
+            if argv[1] == 'update':
+                update_main(show_output=True)
+            else:
+                system(CONTROL.format(argv[1]))
         elif argv[1] in opts:
             opts[argv[1]]()
         else:
@@ -164,4 +169,4 @@ if __name__ == '__main__':
     try:
         main()
     except BaseException as e:
-        print(f"{e.__class__.__name__}: {e}")
+        print(f'{type(e).__name__}: {e}')
