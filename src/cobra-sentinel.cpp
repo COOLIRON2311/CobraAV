@@ -1,12 +1,10 @@
 #include <unistd.h>
 #include <poll.h>
 #include <sys/ioctl.h>
-#include <sstream>
 #include "av_engine.h"
 #include "cobra-sentinel.h"
 
 const char *FIFO_PATH = "/tmp/cobra.sock";
-const size_t BUF_SIZE = 1024;
 
 int main(int argc, char **argv)
 {
@@ -52,28 +50,26 @@ int main(int argc, char **argv)
     }
 
     umask(0);
-    stringstream data;
-    char buf[BUF_SIZE];
+    string data;
+    char _byte[1];
     ssize_t bytes;
     mkfifo(FIFO_PATH, 06667);
     int pipe = open(FIFO_PATH, O_RDWR|O_NONBLOCK);
-    bool end_of_pipe = false;
 
     fileWatcher->watch();
 
     while (true)
     {
         listener->process_queue();
-        while((bytes = read(pipe, buf, BUF_SIZE)) > 0)
+        while ((bytes = read(pipe, _byte, 1)) > 0)
         {
-            data.write(buf, bytes);
-            end_of_pipe = true;
-        }
-        if (end_of_pipe)
-        {
-            listener->enqueue(data.str());
-            data.str("");
-            end_of_pipe = false;
+            if (*_byte == '\n')
+            {
+                listener->enqueue(data);
+                data = "";
+            }
+            else
+                data += *_byte;
         }
         usleep(1);
     }

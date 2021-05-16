@@ -96,12 +96,13 @@ class DataBase:
         return ''
 
 
-def enqueue_scan(path: str, fifo_path: str = '/tmp/cobra.sock') -> None:
-    if isfile(path):
-        with open(fifo_path, 'w') as pipe:
-            pipe.write(path)
-    else:
-        raise FileNotFoundError("file does not exist")
+def enqueue_scan(files: 'list[str]', fifo_path: str = '/tmp/cobra.sock') -> None:
+    with open(fifo_path, 'w') as pipe:
+        for path in files:
+            if isfile(path):
+                pipe.write(path + '\n')
+            else:
+                raise FileNotFoundError("file does not exist")
 
 
 def send_reload() -> None:

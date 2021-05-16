@@ -31,7 +31,6 @@ private:
     size_t infected = 0;
     Cache cache;
 
-
     static void dbg_log(const string &s)
     {
         ofstream of("dump.txt", ios::app);
@@ -39,10 +38,10 @@ private:
         of.close();
     }
 
-    string get_new_name(const File& file)
+    string get_new_name(const File &file)
     {
         size_t ret = 0;
-        struct dirent* dir;
+        struct dirent *dir;
         DIR *d = opendir(quarantine_path.c_str());
         string exclude = ".avmeta";
         if (d)
@@ -57,7 +56,7 @@ private:
         return ret ? '.' + to_string(ret) : "";
     }
 
-    void contain(const File& file)
+    void contain(const File &file)
     {
         string out = this->quarantine_path + '/' + file.Name() + get_new_name(file);
         rename(file.path.c_str(), out.c_str());
@@ -68,14 +67,14 @@ private:
         chmod(out.c_str(), 0);
     }
 
-    bool exceeds_max_size(const File& file)
+    bool exceeds_max_size(const File &file)
     {
         return this->maxfsize != 0 && file.Stat.st_size > this->maxfsize;
     }
 
-    bool is_exception(const File& file)
+    bool is_exception(const File &file)
     {
-        for (const auto& i : this->exceptions)
+        for (const auto &i : this->exceptions)
         {
             if (regex_match(file.path, i))
             {
@@ -93,7 +92,7 @@ public:
     list<regex> exceptions;
 
     UpdateListener() {}
-    inline void enqueue(const File& file)
+    inline void enqueue(const File &file)
     {
         que.push(file);
     }
@@ -105,14 +104,23 @@ public:
             if (!cache.contains(file.Hash))
             {
                 int ret = scan(file.path.c_str());
-                if (!file.cache && ret == 0) // manually enqued file is clean
+
+                if (!file.cache && ret == 0) // manually enqueued file is clean
                     printf("%s: Clean\n", file.path.c_str());
+
                 if (ret == 1) // only store infected files
                 {
                     if (file.cache)
                         cache.add(file.Hash);
+                    else
+                    { // manually enqueued file is infected
+                        if (this->remove_threat)
+                            remove(file.path.c_str());
+                        else
+                            contain(file);
+                    }
                     // dbg_log(file.path);
-                    infected++;
+                    // infected++;
                     // cout << infected << endl;
                 }
                 // update_size();
@@ -138,4 +146,3 @@ public:
         }
     }
 };
-

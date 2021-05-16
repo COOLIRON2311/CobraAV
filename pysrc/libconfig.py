@@ -41,6 +41,7 @@ class EntryOptionsWindow:
                 self.Box.insert(END, i)
             self.Scroll = Scrollbar(self.ListFrame, command=self.Box.yview)
             self.ButtonsFrame = Frame(self.Root)
+            self.Scroll2 = Scrollbar(self.ButtonsFrame, command=self.Box.xview, orient='horizontal')
             self.Entry = Entry(self.ButtonsFrame)
             self.ButtonAdd = Button(self.ButtonsFrame, text='Добавить', command=self.__add_item)
             self.ButtonDel = Button(self.ButtonsFrame, text='Удалить', command=self.__del_item)
@@ -76,13 +77,14 @@ class EntryOptionsWindow:
 
     def main(self) -> None:
         self.Root.deiconify()
-        center_win(self.Root, '500x390' if self.select_path else '500x410')
+        center_win(self.Root, '500x405' if self.select_path else '500x430')
         self.Root.resizable(False, False)
         self.Root.title(f'Editing {self.List}')
         self.ListFrame.pack(side='top', fill='both', padx=2, pady=2)
         self.Box.pack(side='left', fill='both', expand=True, padx=2, pady=2)
         self.Scroll.pack(side='right', fill='y', padx=2, pady=2)
-        self.Box.config(yscrollcommand=self.Scroll.set)
+        self.Scroll2.pack(side='top', fill='x', padx=2, pady=2)
+        self.Box.config(yscrollcommand=self.Scroll.set, xscrollcommand=self.Scroll2.set)
         self.ButtonsFrame.pack(side='top', padx=2, pady=2, fill='x')
         if not self.select_path:
             self.Entry.pack(fill='both', expand=True, anchor='w', side='top', padx=2, pady=6)

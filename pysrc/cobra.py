@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from os import chmod, getuid, remove, rename, scandir, stat, system
-from os.path import abspath, basename, getctime, isfile, getsize
+from os import chmod, getuid, remove, rename, scandir, stat, system, walk
+from os.path import abspath, basename, getctime, isdir, isfile, getsize
 from os.path import join as path_join
 from pwd import getpwuid
 from libavctl import send_reload
@@ -114,10 +114,23 @@ def blacklist(path: str) -> None:
     send_reload()
 
 
-def scan(path: str) -> None:
-    enqueue_scan(abspath(path))
-    print('Started scanning...')
-    print("Run 'cobra status' to see scan results")
+def scan(_path: str) -> None:
+    _path = abspath(_path)
+    if isfile(_path):
+        enqueue_scan([_path])
+        print('Started scanning...')
+        print("Run 'cobra status' to see scan results")
+
+    elif isdir(_path):
+        targets = []
+        for path, _, files in walk(_path):
+            for file in files:
+                targets.append(path_join(path, file))
+        enqueue_scan(targets)
+        print('Started scanning...')
+        print("Run 'cobra status' to see scan results")
+    else:
+        print('No such file or directory')
 
 
 def setpwd(pwd: str) -> None:
