@@ -19,7 +19,7 @@ Usage: cobra [command] [file]
 
 Commands:
 
- start/stop/status - Cobra Sentinel service control (reqires root)
+ start/stop/restart/status - Cobra Sentinel service control (reqires root)
  (de)contain       - Move file from/to quarantine
  remove            - Delete contained threat
  config            - Open configuration interface
