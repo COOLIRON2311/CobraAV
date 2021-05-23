@@ -149,7 +149,7 @@ def main() -> None:
     elif argc == 2:
         opts = {'config': config_main, 'list-threats': list_threats,
                 'clear-threats': clear_threats}
-        if argv[1] in ('start', 'stop', 'status', 'update', 'restart'):
+        if argv[1] in ('start', 'stop', 'restart', 'status', 'update'):
             if argv[1] != 'status' and getuid() != 0:
                 print('This operation requires root')
                 return
