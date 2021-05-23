@@ -5,7 +5,8 @@
 
 ### Установка:
 - Скачать дистрибутив программы из раздела [Releases](https://github.com/COOLIRON2311/CobraAV/releases)
-- Установить его командой `sudo apt install ./cobraav_0.1_amd64.deb`
+- Установить его командой `sudo apt install ./cobraav_1.1_amd64.deb`
+- Запустит антивирусную службу командой `sudo cobra start`
 
 ### Использование live-версии программы:
 - Скачать файл [tools/putty.exe](tools/putty.exe) из данного репозитория.
@@ -14,21 +15,22 @@
 - Запустить `server.cmd`
 - Протестировать утилиту `cobra` согласно следующей инструкции:
 ```
-Usage: cobra [command] [file]                                     
-                                                                  
-Commands:                                                         
-                                                                  
+Usage: cobra [command] [file]
+
+Commands:
+
  start/stop/status - Cobra Sentinel service control (reqires root)
- (de)contain       - Move file from/to quarantine                 
- remove            - Delete contained threat                      
- config            - Open configuration interface                 
- scan              - Manually specify scan target                 
- whitelist         - Add file signature to exceptions list        
- blacklist         - Add file signature to malware database       
- list-threats      - View contained threats                       
- clear-threats     - Delete all contained threats                 
-``` 
-<br><br/>
+ (de)contain       - Move file from/to quarantine
+ remove            - Delete contained threat
+ config            - Open configuration interface
+ setpwd            - Set sender email password
+ scan              - Manually specify scan target
+ update            - Manually update malware database
+ whitelist         - Add file signature to exceptions list
+ blacklist         - Add file signature to malware database
+ list-threats      - View contained threats
+ clear-threats     - Delete all contained threats
+```
 
 ***Обратите внимание:***
 - для всех команд работает [умное авто-дополнение bash](unix/cobra.sh)
@@ -36,9 +38,15 @@ Commands:
 ![](imgs/tab.gif)
 <br><br/>
 
+## API
+Библиотека `libavctl` делает возможным использование нашего приложения непосредственно из-под различных языков программирования:
+- `libavctl.py` - Python
+- `libavctl.h` - C++
+<br><br/>
+
 ## Демонстрация работы программы:<br><br/>
 ### Графический конфигуратор: (NEW!)<br><br/>
-![](imgs/config.png) ![](imgs/config2.png)<br><br/>
+![](imgs/config.png) ![](imgs/config2.png) ![](imgs/config3.png)<br><br/>
 
 ### Потребление памяти: (NEW!)<br><br/>
 ![](imgs/mem.png)<br><br/>
