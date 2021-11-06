@@ -8,6 +8,7 @@ from tkinter.ttk import (Button, Checkbutton, Entry, Frame, Label, LabelFrame,
 
 from config import *
 from libunits import *
+from lang import L
 
 CONF_PATH = '/opt/cobraav/config.py'
 
@@ -99,14 +100,14 @@ class MainWindow:
     def __init__(self) -> None:
         self.Root = Tk()
         self.App = Frame(self.Root, padding=(5, 2))
-        self.UpdatesFrame = LabelFrame(self.App, text='Обновление',
+        self.UpdatesFrame = LabelFrame(self.App, text=L.UpdatesFrame,
                                        borderwidth=2, relief='sunken', padding=(5, 2))
         self.upd_enabled = BooleanVar()  # Флаг обновлений
         self.upd_unit = StringVar()  # Единица измерения времени
-        self.time_units = {Minutes: 'Минут', Hours: 'Часов',
-                           Days: 'Дней', Weeks: 'Недель', Months: 'Месяцев'}
-        self.size_units = {Bytes: 'Байт', KBytes: 'Кбайт', MBytes:'Мбайт',
-                           GBytes:'Гбайт', TBytes:'Тбайт'}  # Список единиц измерения времени
+        self.time_units = {Minutes: L.Minutes, Hours: L.Hours,
+                           Days: L.Days, Weeks: L.Weeks, Months: L.Months}
+        self.size_units = {Bytes: L.Bytes, KBytes: L.KBytes, MBytes: L.MBytes,
+                           GBytes: L.GBytes, TBytes: L.TBytes}  # Список единиц измерения времени
         self.maxfsize = StringVar()  # Максимальный размер файла
         self.size_unit = StringVar()  # Единица измерения информации
         self.units_amount1 = StringVar()  # Количество единиц
@@ -118,49 +119,49 @@ class MainWindow:
         self.rpt_unit = StringVar()  # Единица измерения времени
         self.units_amount2 = StringVar()  # Количество единиц
 
-        self.Upd_Label1 = Label(self.UpdatesFrame, text='Проверять обновления антивирусных баз')
+        self.Upd_Label1 = Label(self.UpdatesFrame, text=L.Upd_Label1)
         self.Upd_Checkbutton1 = Checkbutton(self.UpdatesFrame, variable=self.upd_enabled)
-        self.Upd_Label2 = Label(self.UpdatesFrame, text='Частота проверки:   каждые')
+        self.Upd_Label2 = Label(self.UpdatesFrame, text=L.Upd_Label2)
         self.Upd_Spinbox1 = Spinbox(self.UpdatesFrame, textvariable=self.units_amount1,
                                     from_=1, to=999999999, width=4)
         self.Upd_OptionMenu1 = OptionMenu(self.UpdatesFrame, self.upd_unit, *self.time_units.values())
         self.Upd_Button1 = Button(
-            self.UpdatesFrame, text='Источники антивирусных сигнатур', command=lambda: EntryOptionsWindow('AV_SOURCES', self.Root))
+            self.UpdatesFrame, text=L.Upd_Button1, command=lambda: EntryOptionsWindow('AV_SOURCES', self.Root))
 
-        self.ScanFrame = LabelFrame(self.App, text='Сканирование',
+        self.ScanFrame = LabelFrame(self.App, text=L.ScanFrame,
                                     borderwidth=2, relief='sunken', padding=(5, 2))
-        self.Scn_Label1 = Label(self.ScanFrame, text='Максимальный размер файла:')
+        self.Scn_Label1 = Label(self.ScanFrame, text=L.Scn_Label1)
         self.Scn_Spinbox1 = Spinbox(self.ScanFrame, textvariable=self.maxfsize,
                                     from_=0, to=999999999, width=8)
 
-        self.Quar_Label = Label(self.ScanFrame, text='При обнаружении угрозы')
-        self.Quar_RadButton1 = Radiobutton(self.ScanFrame, text='Удаление', variable=self.quar, value=False)
-        self.Quar_RadButton2 = Radiobutton(self.ScanFrame, text='Карантин', variable=self.quar, value=True)
+        self.Quar_Label = Label(self.ScanFrame, text=L.Quar_Label)
+        self.Quar_RadButton1 = Radiobutton(self.ScanFrame, text=L.Quar_RadButton1, variable=self.quar, value=False)
+        self.Quar_RadButton2 = Radiobutton(self.ScanFrame, text=L.Quar_RadButton2, variable=self.quar, value=True)
 
         self.Scn_OptionMenu1 = OptionMenu(self.ScanFrame, self.size_unit, *self.size_units.values())
-        self.Scn_Edit_Targets = Button(self.ScanFrame, text='Цели сканирования', command=lambda: EntryOptionsWindow('SCAN_TARGETS', self.Root, select_path=True))
-        self.Scn_Edit_Exceptions = Button(self.ScanFrame, text='Исключения', command=lambda: EntryOptionsWindow('SCAN_EXCLUDE', self.Root))
-        self.Quar_Button1 = Button(self.ScanFrame, text='Расположение карантина',
+        self.Scn_Edit_Targets = Button(self.ScanFrame, text=L.Scn_Edit_Targets, command=lambda: EntryOptionsWindow('SCAN_TARGETS', self.Root, select_path=True))
+        self.Scn_Edit_Exceptions = Button(self.ScanFrame, text=L.Scn_Edit_Exceptions, command=lambda: EntryOptionsWindow('SCAN_EXCLUDE', self.Root))
+        self.Quar_Button1 = Button(self.ScanFrame, text=L.Quar_Button1,
                                    command=lambda: self.quar_path.set(filedialog.askdirectory()))
 
-        self.ReportFrame = LabelFrame(self.App, text='Отправка отчета',
+        self.ReportFrame = LabelFrame(self.App, text=L.ReportFrame,
                                       borderwidth=2, relief='sunken', padding=(5, 2))
 
-        self.Rpt_Label1 = Label(self.ReportFrame, text='Отправлять отчеты о сканировании')
+        self.Rpt_Label1 = Label(self.ReportFrame, text=L.Rpt_Label1)
         self.Rpt_Checkbutton1 = Checkbutton(self.ReportFrame, variable=self.rpt_enabled)
-        self.Rpt_Label2 = Label(self.ReportFrame, text='Адрес отправки отчетов:')
+        self.Rpt_Label2 = Label(self.ReportFrame, text=L.Rpt_Label2)
         self.Rpt_Entry1 = Entry(self.ReportFrame, textvariable=self.email, width=32)
-        self.Rpt_Label3 = Label(self.ReportFrame, text='Пароль:')
+        self.Rpt_Label3 = Label(self.ReportFrame, text=L.Rpt_Label3)
         self.Rpt_Entry2 = Entry(self.ReportFrame, textvariable=self.passwd, width=32, show='*')
-        self.Rpt_Label4 = Label(self.ReportFrame, text='Частота:')
+        self.Rpt_Label4 = Label(self.ReportFrame, text=L.Rpt_Label4)
         self.Rpt_Spinbox1 = Spinbox(self.ReportFrame, textvariable=self.units_amount2,
                                     from_=1, to=999999999, width=4)
         self.Rpt_OptionMenu1 = OptionMenu(self.ReportFrame, self.rpt_unit, *self.time_units.values())
-        self.Rpt_Button1 = Button(self.ReportFrame, text='Получатели', command=lambda: EntryOptionsWindow('SEND_TO', self.Root))
+        self.Rpt_Button1 = Button(self.ReportFrame, text=L.Rpt_Button1, command=lambda: EntryOptionsWindow('SEND_TO', self.Root))
 
         self.Buttons = Frame(self.App, padding=(5, 2))
-        self.Button1 = Button(self.Buttons, text='Готово', command=self.save_conf)
-        self.Button2 = Button(self.Buttons, text='Отмена', command=self.Root.destroy)
+        self.Button1 = Button(self.Buttons, text=L.Done, command=self.save_conf)
+        self.Button2 = Button(self.Buttons, text=L.Cancel, command=self.Root.destroy)
 
     def main(self) -> None:
         self.upd_unit.set(self.time_units[type(UPDATE_FREQ)])
@@ -338,4 +339,3 @@ def main() -> None:
         system(f'/usr/bin/editor {CONF_PATH}')
     except BaseException as e:
         print(f'{type(e).__name__}: {e}')
-

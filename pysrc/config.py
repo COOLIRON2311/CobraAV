@@ -48,3 +48,6 @@ SEND_TO = [r'example@yahoo.com']
 # SMTP settings (preset for gmail)
 SMTP_HOST = 'smtp.gmail.com'
 SMTP_PORT = 587
+
+# GUI Language
+LANG = 'en'
