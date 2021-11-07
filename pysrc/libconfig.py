@@ -324,6 +324,9 @@ SEND_TO = {wrap_list(SEND_TO)}
 # SMTP settings (preset for gmail)
 SMTP_HOST = 'smtp.gmail.com'
 SMTP_PORT = 587
+
+# GUI Language
+LANG = '{LANG}'
 """)
         self.Root.destroy()
 
